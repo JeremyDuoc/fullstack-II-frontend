@@ -87,7 +87,7 @@ function AdminProductos() {
                       <button className="btn btn-sm btn-outline-primary me-2">
                         <FontAwesomeIcon icon={faEdit} />
                       </button>
-                      <button className="btn btn-sm btn-outline-danger" onClick={() => producto.id && handleDelete(producto.id)}>
+                      <button className="btn btn-sm btn-outline-danger" >
                         <FontAwesomeIcon icon={faTrash} />
                       </button>
                     </td>
