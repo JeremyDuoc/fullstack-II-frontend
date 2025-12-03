@@ -3,44 +3,45 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faEdit, faTrash, faPlus } from '@fortawesome/free-solid-svg-icons';
 import { Link } from 'react-router-dom';
 import { Product } from '../../types/types'; 
-
+import toast from 'react-hot-toast';
 
 function AdminProductos() {
-  
   const [productos, setProductos] = useState<Product[]>([]);
 
+  // Cargar productos
   useEffect(() => {
     fetch('http://localhost:8080/api/productos')
       .then(res => res.json())
       .then(data => setProductos(data))
       .catch(err => console.error("Error cargando productos:", err));
   }, []);
-  
+
   const handleDelete = async (id: number) => {
     if (!window.confirm('¿Estás seguro de eliminar este producto?')) return;
 
     try {
       const token = localStorage.getItem('token'); 
+
       const response = await fetch(`http://localhost:8080/api/productos/${id}`, {
         method: 'DELETE',
         headers: {
-          'Authorization': `Bearer ${token}` 
+          'Authorization': `Bearer ${token}`, 
+          'Content-Type': 'application/json'
         }
       });
 
       if (response.ok) {
-        setProductos(productos.filter(p => p.id !== id));
-        alert('Producto eliminado');
+        setProductos(prevProductos => prevProductos.filter(p => p.id !== id));
+        toast.success('Producto eliminado correctamente');
       } else {
-        alert('Error al eliminar');
+        toast.error('No se pudo eliminar (Error de permisos o servidor)');
       }
     } catch (error) {
       console.error(error);
-      alert('Error de conexión');
+      toast.error('Error de conexión');
     }
   };
 
-  
   return (
     <div className="container py-5">
       <div className="d-flex justify-content-between align-items-center mb-4">
@@ -64,7 +65,7 @@ function AdminProductos() {
               </thead>
               <tbody>
                 {productos.map((producto) => (
-                  <tr key={producto.id || producto.name}>
+                  <tr key={producto.id}>
                     <td className="ps-4">
                       <div className="d-flex align-items-center">
                         <img 
@@ -75,21 +76,35 @@ function AdminProductos() {
                         />
                         <div>
                           <h6 className="mb-0 fw-bold">{producto.name}</h6>
-                          <small className="text-muted d-block text-truncate" style={{ maxWidth: '200px' }}>
-                            {producto.description}
-                          </small>
                         </div>
                       </div>
                     </td>
                     <td><span className="badge bg-light text-dark border">{producto.category}</span></td>
                     <td className="fw-bold text-success">${producto.price.toLocaleString('es-CL')}</td>
                     <td className="text-end pe-4">
-                      <button className="btn btn-sm btn-outline-primary me-2">
+                      
+                      <Link 
+                        to={`/admin/productos/editar/${encodeURIComponent(producto.name)}`}
+                        className="btn btn-sm btn-outline-primary me-2"
+                        onClick={() => console.log("Yendo a editar:", producto.name)}
+                      >
                         <FontAwesomeIcon icon={faEdit} />
-                      </button>
-                      <button className="btn btn-sm btn-outline-danger" >
-                        <FontAwesomeIcon icon={faTrash} />
-                      </button>
+                      </Link>
+
+                      <button 
+                      className="btn btn-sm btn-outline-danger"
+                      onClick={() => {
+                          console.log("Click en eliminar. ID del producto:", producto.id); 
+                          if (producto.id) {
+                              handleDelete(producto.id);
+                          } else {
+                              alert("ERROR: Este producto no tiene ID. Revisa la base de datos.");
+                          }
+                      }}
+                    >
+                      <FontAwesomeIcon icon={faTrash} />
+                    </button>
+
                     </td>
                   </tr>
                 ))}
@@ -100,8 +115,6 @@ function AdminProductos() {
       </div>
     </div>
   );
-
-  
 }
 
 export default AdminProductos;
