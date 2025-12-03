@@ -7,11 +7,8 @@ import {
   faMapMarkerAlt
 } from '@fortawesome/free-solid-svg-icons';
 
-// --- ¡NUEVOS IMPORTS PARA EL MAPA! ---
 import { MapContainer, TileLayer, Marker, Popup } from 'react-leaflet';
 import { Icon } from 'leaflet';
-
-// --- AQUÍ ESTÁ LA CORRECCIÓN ---
 // Definición completa del tipo para FeatureCard
 type FeatureCardProps = {
   icon: any;
@@ -33,7 +30,6 @@ const FeatureCard: React.FC<FeatureCardProps> = ({ icon, title, text }) => (
 );
 
 
-// --- DATOS PARA NUESTRO NUEVO MAPA ---
 const locations = [
   { city: 'Santiago', region: 'Región Metropolitana', coords: [-33.4489, -70.6693] as [number, number] },
   { city: 'Valparaíso', region: 'Región de Valparaíso', coords: [-33.0458, -71.6197] as [number, number] },
@@ -44,17 +40,15 @@ const locations = [
   { city: 'Puerto Montt', region: 'Región de Los Lagos', coords: [-41.4718, -72.9429] as [number, number] },
 ];
 
-// Creamos un ícono personalizado
 const customMarkerIcon = new Icon({
-  iconUrl: 'https://cdn-icons-png.flaticon.com/512/2776/2776067.png', // Un ícono de marcador
-  iconSize: [38, 38], // tamaño
+  iconUrl: 'https://cdn-icons-png.flaticon.com/512/2776/2776067.png', 
+  iconSize: [38, 38], 
 });
 
 
 function Home() {
   return (
     <>
-      {/* --- HERO (Igual que antes, con la imagen) --- */}
       <section 
         className="py-5 text-center position-relative" 
         style={{ 
